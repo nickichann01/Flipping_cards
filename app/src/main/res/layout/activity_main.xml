@@ -36,4 +36,33 @@
         android:src="@drawable/srt_btn"
         android:background="@drawable/btn_color" />
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp">
+
+    </FrameLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btSave"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="158dp"
+        android:layout_marginLeft="265dp"
+        android:layout_marginEnd="151dp"
+        android:layout_marginBottom="125dp"
+        android:backgroundTint="#43A6C6"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:paddingStart="5dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="10dp"
+        android:text="Scores"
+        android:textColor="@color/white"
+        app:cornerRadius="5dp"/>
+
 </RelativeLayout>

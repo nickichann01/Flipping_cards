@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Stream;
 
-public class LevelOne extends AppCompatActivity {
+public class LevelThree extends AppCompatActivity {
 
     //For the timer
     private CountDownTimer countDownTimer;
@@ -30,18 +30,22 @@ public class LevelOne extends AppCompatActivity {
 
     int image01, image02, image03, image04, image05, image06,
             image07, image08, image09, image010, image011, image012;
-    int firstCard, secondCard, clickFirst, clickSecond;
+    int firstCard, secondCard, clickFirst, clickSecond, playerScore;
 
     int cardNumber = 1;
-    int playerPoints = 0;
+
+    //Life
+    private int chancesLeft = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_level_one);
+        setContentView(R.layout.activity_level_three);
+
+        playerScore = getIntent().getIntExtra("score", 0);
 
         timer = findViewById(R.id.time);
-        countDownTimer = new CountDownTimer(60000, 1000) {
+        countDownTimer = new CountDownTimer(40000, 100) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long seconds = millisUntilFinished / 1000;
@@ -50,8 +54,23 @@ public class LevelOne extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                timer.setText("Time is over");
-                navigateToNextActivity();
+                timer.setText("0");
+                // Display the "Game over" message
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(LevelThree.this);
+                alertDialogBuilder
+                        .setMessage("Game over! Your score is " + playerScore)
+                        .setCancelable(false)
+                        .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // Return to the main activity or perform any other action
+                                Intent intent = new Intent(LevelThree.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
             }
         }.start();
 
@@ -255,7 +274,7 @@ public class LevelOne extends AppCompatActivity {
                     //check if the selected images are equal
                     calculate();
                 }
-            }, 1000);
+            }, 500);
         }
     }
     private void calculate(){
@@ -314,10 +333,10 @@ public class LevelOne extends AppCompatActivity {
             }
 
             //Add points if correct
-            playerPoints += 5;
-            score.setText(" " + playerPoints);
+            playerScore += 5;
+            score.setText(" " + playerScore);
 
-            } else {
+        } else {
             int[] cardIds = {
                     R.id.card1, R.id.card2, R.id.card3, R.id.card4, R.id.card5, R.id.card6,
                     R.id.card7, R.id.card8, R.id.card9, R.id.card10, R.id.card11, R.id.card12
@@ -326,6 +345,42 @@ public class LevelOne extends AppCompatActivity {
             for (int id : cardIds) {
                 ImageView card = findViewById(id);
                 card.setImageResource(R.drawable.bk2);
+            }
+            //minus if not pair cards.
+            playerScore -= 5;
+            score.setText(" " + playerScore);
+
+            if (playerScore <= 0) {
+                chancesLeft--;
+                if (chancesLeft == 0) {
+                    // Game over
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Game Over")
+                            .setMessage("Your score dropped to zero!")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // For example, you can restart the game or navigate to another activity
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setCancelable(false)
+                            .show();
+                } else {
+                    // Display message for chance remaining
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Oops!")
+                            .setMessage("Your score dropped to zero. You have " + chancesLeft + " chance(s) left.")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Continue the game
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setCancelable(false)
+                            .show();
+                }
             }
         }
         if (card1.getVisibility() == View.INVISIBLE &&
@@ -341,11 +396,10 @@ public class LevelOne extends AppCompatActivity {
                 card11.getVisibility() == View.INVISIBLE &&
                 card12.getVisibility() == View.INVISIBLE) {
             countDownTimer.cancel(); // Stop the timer
-            }
-
+        }
         enableAllCards();
         checkEnd();
-        }
+    }
 
     private void enableAllCards() {
         Stream.of(card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12)
@@ -366,23 +420,22 @@ public class LevelOne extends AppCompatActivity {
                 card11.getVisibility() == View.INVISIBLE &&
                 card12.getVisibility() == View.INVISIBLE) {
 
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(LevelOne.this);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(LevelThree.this);
             alertDialogBuilder
-                    .setMessage("Congratulations! Your score is " + playerPoints + ". Next Level is Medium!")
+                    .setMessage("Congratulations! Your score is " + playerScore)
                     .setCancelable(false)
                     .setPositiveButton("Next Level", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Intent intent = new Intent(LevelOne.this, LevelTwo.class);
-                            intent.putExtra("score", playerPoints); // Pass the score to the next activity
+                            Intent intent = new Intent(LevelThree.this, LevelTwo.class);
+                            intent.putExtra("score", playerScore);
                             startActivity(intent);
-                            dialogInterface.dismiss();
                         }
                     })
                     .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Intent intent = new Intent(LevelOne.this, MainActivity.class);
+                            Intent intent = new Intent(LevelThree.this, MainActivity.class);
                             startActivity(intent);
                             finish();
                         }
@@ -409,18 +462,31 @@ public class LevelOne extends AppCompatActivity {
 
     //Timer
     private void navigateToNextActivity() {
-        Intent intent = new Intent(LevelOne.this, LevelTwo.class);
+        Intent intent = new Intent(LevelThree.this, LevelThree.class);
         startActivity(intent);
-        finish(); // Optional: Close this activity if not needed anymore
+        finish();
+        // Optional: Close this activity if not needed anymore [parang sya hihi:>]
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         if (countDownTimer != null) {
-            //this will ensure the timer will stop if the given time is over.
             countDownTimer.cancel();
+            //this will ensure the timer will stop if the given time is over.
         }
-    }
+        if (playerScore == 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Game Over")
+                    .setMessage("Your score dropped to zero!")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // For example, you can restart the game or navigate to another activity
+                            dialog.dismiss();
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
+        }    }
 }

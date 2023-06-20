@@ -12,6 +12,9 @@
         android:theme="@style/Theme.PrefiTaskPerformance"
         tools:targetApi="31">
         <activity
+            android:name=".LevelThree"
+            android:exported="false" />
+        <activity
             android:name=".LevelTwo"
             android:exported="false" />
         <activity

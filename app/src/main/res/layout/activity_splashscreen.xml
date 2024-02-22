@@ -7,22 +7,19 @@
     android:background="@drawable/obg1"
     tools:context=".Splashscreen">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ImageView
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:text="Doraemon"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="150dp"
-        android:fontFamily="@font/doraemon_font"
-        android:textSize="80dp"
-        android:textColor="@color/black"/>
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/dor"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Matching Cards"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="230dp"
+        android:layout_marginTop="270dp"
         android:fontFamily="@font/doraemon_font"
         android:textSize="30dp"
         android:textColor="@color/white"/>
